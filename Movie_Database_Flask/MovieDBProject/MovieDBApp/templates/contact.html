@@ -1,0 +1,584 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us | MovieDB{% endblock %}
+{% block styles %}
+<style>
+    /* Hero section */
+    .contact-hero {
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('https://images.unsplash.com/photo-1543536448-d209d2d13a1c?q=80&w=1470');
+        background-size: cover;
+        background-position: center;
+        padding: 6rem 0;
+        margin-bottom: 4rem;
+        color: white;
+        text-align: center;
+    }
+
+    .contact-hero h1 {
+        font-size: 4rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        color: #ff4d4d;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 0.8s ease forwards;
+    }
+
+    .contact-hero p {
+        font-size: 1.2rem;
+        max-width: 700px;
+        margin: 0 auto;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 0.8s ease forwards 0.3s;
+    }
+
+    /* Main contact section */
+    .contact-section {
+        padding: 4rem 0;
+    }
+
+    .contact-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 3rem;
+    }
+
+    .contact-form-container {
+        background-color: #2c2c2c;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: fadeIn 1s ease forwards;
+    }
+
+    .contact-form-container:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .contact-info {
+        padding: 2.5rem;
+        border-radius: 20px;
+        background-color: #2c2c2c;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
+        animation: fadeIn 1s ease forwards 0.3s;
+    }
+
+    .contact-method {
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: flex-start;
+        transition: transform 0.3s ease;
+    }
+
+    .contact-method:hover {
+        transform: translateX(10px);
+    }
+
+    .contact-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: #ff4d4d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1.5rem;
+        font-size: 1.5rem;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .contact-details h3 {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+        color: #ff4d4d;
+    }
+
+    .contact-details p {
+        color: #ddd;
+        line-height: 1.6;
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+        color: #ff4d4d;
+        position: relative;
+        padding-bottom: 1rem;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 60px;
+        height: 4px;
+        background-color: #ff4d4d;
+    }
+
+    /* Form elements */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #ddd;
+        font-weight: 500;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #444;
+        border-radius: 10px;
+        background-color: #333;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #ff4d4d;
+        box-shadow: 0 0 0 3px rgba(255, 77, 77, 0.3);
+        outline: none;
+    }
+
+    .form-control::placeholder {
+        color: #888;
+    }
+
+    .submit-btn {
+        background-color: #ff4d4d;
+        color: white;
+        border: none;
+        padding: 1.2rem 2rem;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        width: 100%;
+        letter-spacing: 1px;
+    }
+
+    .submit-btn:hover {
+        background-color: #ff3333;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .submit-btn:active {
+        transform: translateY(-2px);
+    }
+
+    /* FAQ section */
+    .faq-section {
+        padding: 4rem 0;
+        background-color: #1a1a1a;
+    }
+
+    .faq-title {
+        text-align: center;
+        margin-bottom: 3rem;
+        position: relative;
+    }
+
+    .faq-title h2 {
+        font-size: 2.5rem;
+        color: #ff4d4d;
+        margin-bottom: 1rem;
+    }
+
+    .faq-title::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        background-color: #ff4d4d;
+        margin: 1rem auto;
+    }
+
+    .accordion-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .accordion-item {
+        background-color: #2c2c2c;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.5s ease;
+    }
+
+    .accordion-item.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .accordion-header {
+        padding: 1.5rem;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+    }
+
+    .accordion-header:hover {
+        background-color: #333;
+    }
+
+    .accordion-icon {
+        font-size: 1.2rem;
+        color: #ff4d4d;
+        transition: transform 0.3s ease;
+    }
+
+    .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        padding: 0 1.5rem;
+    }
+
+    .accordion-content p {
+        padding: 1.5rem 0;
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    .accordion-item.active .accordion-header {
+        background-color: #333;
+    }
+
+    .accordion-item.active .accordion-icon {
+        transform: rotate(180deg);
+    }
+
+    .accordion-item.active .accordion-content {
+        max-height: 300px;
+    }
+
+    /* Map section */
+    .map-container {
+        position: relative;
+        height: 400px;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        margin-top: 4rem;
+    }
+
+    .map-container iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .contact-container {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .login-prompt {
+        background-color: #ff4d4d;
+        color: white;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .login-link {
+        color: white;
+        text-decoration: underline;
+        font-weight: bold;
+    }
+
+    .login-link:hover {
+        color: #ffcccc;
+    }
+
+    .form-control:disabled {
+        background-color: #444;
+        cursor: not-allowed;
+    }
+
+    .submit-btn:disabled {
+        background-color: #666;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .submit-btn:disabled:hover {
+        transform: none;
+        box-shadow: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+
+<div class="contact-hero">
+    <h1>Contact Us</h1>
+    <p>Have questions or feedback? We'd love to hear from you!</p>
+</div>
+
+<div class="contact-section">
+    <div class="contact-container">
+        <div class="contact-form-container">
+            <h2 class="section-title">Send us a Message</h2>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            
+            
+            <form method="post" class="contact-form" >
+                {% csrf_token %}
+    <div class="form-group">
+        <label class="form-label" for="name">Name</label>
+        <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name">
+    </div>
+    <div class="form-group">
+        <label class="form-label" for="email">Email</label>
+        <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email">
+    </div>
+    <div class="form-group">
+        <label class="form-label" for="subject">Subject</label>
+        <input type="text" class="form-control" id="subject" name="subject" placeholder="Enter subject">
+    </div>
+    <div class="form-group">
+        <label class="form-label" for="message">Message</label>
+        <textarea class="form-control" id="message" name="message" rows="5" placeholder="Enter your message"></textarea>
+    </div>
+    <button type="submit" class="submit-btn">
+        Send Message
+    </button>
+            </form>
+        </div>
+
+        <div class="contact-info">
+            <h2 class="section-title">Contact Information</h2>
+            <div class="contact-method">
+                <div class="contact-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="contact-details">
+                    <h3>Our Location</h3>
+                    <p>Chitkara University, Rajpura, Punjab</p>
+                </div>
+            </div>
+
+            <div class="contact-method">
+                <div class="contact-icon">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <div class="contact-details">
+                    <h3>Phone Number</h3>
+                    <p>+1 (555) 123-4567</p>
+                </div>
+            </div>
+
+            <div class="contact-method">
+                <div class="contact-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="contact-details">
+                    <h3>Email Address</h3>
+                    <p>info@moviedb.com<br>support@moviedb.com</p>
+                </div>
+            </div>
+
+            <div class="contact-method">
+                <div class="contact-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="contact-details">
+                    <h3>Co-Owners</h3>
+                    <p>Armaan Bhardwaj<br>Harpreet Singh<br>Devyansh Aggarwal</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="faq-section">
+    <div class="faq-title">
+        <h2>Frequently Asked Questions</h2>
+    </div>
+    <div class="accordion-container">
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span>How do I create an account on MovieDB?</span>
+                <i class="fas fa-chevron-down accordion-icon"></i>
+            </div>
+            <div class="accordion-content">
+                <p>Creating an account is simple! Click on the "Register" button in the top-right corner of the page. Fill in your details including your name, email, and create a password. After registration, you'll be able to access all features including creating watchlists, rating movies, and leaving reviews.</p>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span>How can I add movies to my favorites list?</span>
+                <i class="fas fa-chevron-down accordion-icon"></i>
+            </div>
+            <div class="accordion-content">
+                <p>To add a movie to your favorites, simply click the heart icon on any movie's page. You must be logged in to use this feature. You can view and manage your favorites from your profile page.</p>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span>Can I suggest a movie that's not in the database?</span>
+                <i class="fas fa-chevron-down accordion-icon"></i>
+            </div>
+            <div class="accordion-content">
+                <p>Yes! If you notice a movie missing from our database, you can use the contact form to suggest it. Please include the movie's title, release year, and any other relevant information. Our team will review your suggestion and add it to our database if it meets our criteria.</p>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span>How do I report incorrect movie information?</span>
+                <i class="fas fa-chevron-down accordion-icon"></i>
+            </div>
+            <div class="accordion-content">
+                <p>If you find any incorrect information about a movie, please use the contact form to report it. Include the movie title, the incorrect information, and the correct information. Our team will verify and update the details as soon as possible.</p>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span>How can I leave a review for a movie?</span>
+                <i class="fas fa-chevron-down accordion-icon"></i>
+            </div>
+            <div class="accordion-content">
+                <p>To leave a review, you need to be logged in. Navigate to the movie's page and scroll down to the reviews section. Click on "Write a Review" and share your thoughts about the movie. You can also rate the movie using our star rating system.</p>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span>Is MovieDB free to use?</span>
+                <i class="fas fa-chevron-down accordion-icon"></i>
+            </div>
+            <div class="accordion-content">
+                <p>Yes, MovieDB is completely free to use! All our basic features including browsing movies, creating watchlists, and leaving reviews are available at no cost. We may introduce premium features in the future, but our core services will always remain free.</p>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span>How can I reset my password?</span>
+                <i class="fas fa-chevron-down accordion-icon"></i>
+            </div>
+            <div class="accordion-content">
+                <p>If you've forgotten your password, click on the "Forgot Password" link on the login page. Enter your registered email address, and we'll send you instructions to reset your password. Make sure to check your spam folder if you don't receive the email.</p>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span>How do I update my profile information?</span>
+                <i class="fas fa-chevron-down accordion-icon"></i>
+            </div>
+            <div class="accordion-content">
+                <p>To update your profile, log in and click on your username in the top-right corner. Select "Profile" from the dropdown menu. Here you can update your profile picture, email, and other personal information. Don't forget to save your changes!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const accordionItems = document.querySelectorAll('.accordion-item');
+        
+        accordionItems.forEach(item => {
+            const header = item.querySelector('.accordion-header');
+            const content = item.querySelector('.accordion-content');
+            const icon = item.querySelector('.accordion-icon');
+            
+            // Show first item by default
+            if (item === accordionItems[0]) {
+                content.style.maxHeight = content.scrollHeight + "px";
+                icon.style.transform = 'rotate(180deg)';
+            }
+            
+            header.addEventListener('click', () => {
+                const isOpen = content.style.maxHeight;
+                
+                // Close all items
+                accordionItems.forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.querySelector('.accordion-content').style.maxHeight = null;
+                        otherItem.querySelector('.accordion-icon').style.transform = 'rotate(0deg)';
+                    }
+                });
+                
+                // Toggle current item
+                if (isOpen) {
+                    content.style.maxHeight = null;
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            });
+        });
+        
+        // Animate accordion items
+        setTimeout(() => {
+            accordionItems.forEach((item, index) => {
+                setTimeout(() => {
+                    item.classList.add('visible');
+                }, index * 200);
+            });
+        }, 500);
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,340 @@
+{% extends 'base.html' %}
+
+{% block title %}All {{ genre }} Movies{% endblock %}
+
+{% block styles %}
+<style>
+    /* Using the same styling as movies.html */
+    body {
+        background-color: #0a0a0a;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .page-header {
+        padding: 1.7rem 0;
+        text-align: center;
+        background: linear-gradient(to right, #1a1a1a, #2a2a2a);
+        margin-top: 0.2rem;
+        margin-bottom: 2rem;
+        border-radius: 0 0 30px 30px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .genre-highlight {
+        color: #ff3366;
+    }
+
+    .movie-card {
+        background: linear-gradient(145deg, #1f1f1f, #2a2a2a);
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        height: 100%;
+        overflow: hidden;
+        cursor: pointer;
+        position: relative;
+        margin-bottom: 2rem;
+    }
+
+    .movie-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 15px 35px rgba(255, 51, 102, 0.2);
+    }
+
+    .movie-img {
+        border-radius: 16px 16px 0 0;
+        object-fit: cover;
+        height: 380px;
+        width: 100%;
+        transition: transform 0.4s ease;
+    }
+
+    .movie-card:hover .movie-img {
+        transform: scale(1.05);
+    }
+
+    .movie-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 0.5rem;
+        line-height: 1.4;
+    }
+
+    .movie-info {
+        color: #cccccc;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.3rem;
+        margin-left: 8px;
+    }
+
+    .movie-info i {
+        margin-right: 0.5rem;
+        color: #ff3366;
+    }
+
+
+    .rating-badge {
+        background: linear-gradient(45deg, #ff3366, #ff6b3d);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-block;
+        margin-top: 0.5rem;
+        margin-left: 10px;
+        margin-bottom: 10px;
+    }
+
+    .movie-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        height: 100%;
+    }
+
+    .movie-link:hover {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .details-link {
+        display: inline-block;
+        background: rgba(255, 51, 102, 0.1);
+        color: #ff3366;
+        padding: 0.6rem 1.2rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+        border: 1px solid rgba(255, 51, 102, 0.3);
+    }
+
+    .details-link:hover {
+        background: rgba(255, 51, 102, 0.2);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(255, 51, 102, 0.15);
+        color: #ff3366;
+    }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.7rem;
+        background: linear-gradient(45deg, #ff3366, #ff6b3d);
+        color: white;
+        padding: 0.8rem 1.8rem;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.4s ease;
+        box-shadow: 0 8px 20px rgba(255, 51, 102, 0.3);
+        margin: 2rem 0;
+    }
+
+    .back-button:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(255, 51, 102, 0.4);
+        color: white;
+    }
+
+    .back-button i {
+        font-size: 1.1rem;
+        transition: transform 0.3s ease;
+    }
+
+    .back-button:hover i {
+        transform: translateX(-3px);
+    }
+
+    .no-movies {
+        color: #ffffff;
+        text-align: center;
+        padding: 3rem;
+        background: rgba(30, 30, 30, 0.7);
+        border-radius: 16px;
+        margin: 2rem 0;
+        border-left: 3px solid #ff3366;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    .movie-card {
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .movie-img {
+            height: 280px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+        }
+    }
+
+
+
+    .movie-card {
+        background: linear-gradient(145deg, #1f1f1f, #2a2a2a);
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        overflow: hidden;
+        cursor: pointer;
+        position: relative;
+        height: 600px; /* Fixed height */
+        display: flex;
+        flex-direction: column;
+    }
+
+    .movie-img {
+        height: 400px; /* Fixed height for image */
+        width: 100%;
+        object-fit: cover;
+        border-radius: 16px 16px 0 0;
+    }
+    .card-body {
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        height: calc(100% - 400px); /* Remaining space after image */
+    }
+
+    .movie-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .movie-info {
+        margin-bottom: 0.3rem;
+        font-size: 0.9rem;
+    }
+
+    .rating-badge {
+        margin: 0.5rem 0;
+        width: 70px;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get all alert messages
+        const alerts = document.querySelectorAll('.alert');
+
+        alerts.forEach(function (alert) {
+            setTimeout(function () {
+                if (typeof bootstrap !== 'undefined') {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                } else {
+                    
+                    alert.style.opacity = '0';
+                    setTimeout(function () {
+                        alert.remove();
+                    }, 200); 
+                }
+            }, 1000); // 1 second
+        });
+    });
+</script>
+
+<div class="container">
+    <div class="page-header">
+        <h1 class="page-title">All <span class="genre-highlight">{{ genre }}</span> Movies</h1>
+    </div>
+
+    <div class="row g-4">
+        {% for movie in movies %}
+        <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+            <div class="movie-card">
+               
+                <a href="{% url 'movie_detail' title=movie.title %}" class="movie-link">
+                    <img src="{{ movie.poster_url }}" class="movie-img" alt="{{ movie.Title }}">
+                    
+                    <div class="card-body">
+                        <h3 class="movie-title">{{ movie.title }}</h3>
+                        <div class="movie-info">
+                            <i class="fas fa-calendar-alt"></i>
+                            {{ movie.year }}
+                        </div>
+                        <div class="movie-info">
+                            <i class="fas fa-globe"></i>
+                            {{ movie.language }}
+                        </div>
+                        {% if movie.imdb_rating %}
+                        <div class="rating-badge">
+                            <i class="fas fa-star"></i>
+                            {{ movie.imdb_rating }}
+                        </div>
+                        {% endif %}
+                        
+                        
+                        
+                        
+                    </div>
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="no-movies">
+                <h3>No {{ genre }} movies found</h3>
+                <p>Try checking out other genres or coming back later.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="text-center">
+        <a href="{% url 'index' %}" class="back-button">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+    </div>
+</div>
+{% endblock %}

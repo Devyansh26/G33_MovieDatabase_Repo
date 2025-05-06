@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Movie{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white">
+            <h3>Add New Movie</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="title">Title*</label>
+                            <input type="text" class="form-control" id="title" name="title" required>
+                            <small class="text-muted">Enter title and click "Check OMDB" to auto-fill movie details</small>
+                        </div>
+                        
+                        <div class="text-center mb-3">
+                            <button type="button" id="check-omdb" class="btn btn-info">
+                                <i class="fas fa-search"></i> Check OMDB
+                            </button>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="year">Year</label>
+                            <input type="text" class="form-control" id="year" name="year">
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="genre">Genre</label>
+                            <input type="text" class="form-control" id="genre" name="genre">
+                            <small class="text-muted">Separate genres with commas</small>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="director">Director</label>
+                            <input type="text" class="form-control" id="director" name="director">
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="imdb_rating">IMDB Rating</label>
+                            <input type="text" class="form-control" id="imdb_rating" name="imdb_rating">
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="actors">Actors</label>
+                            <input type="text" class="form-control" id="actors" name="actors">
+                            <small class="text-muted">Separate actors with commas</small>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="language">Language</label>
+                            <input type="text" class="form-control" id="language" name="language">
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="trailer">Trailer URL</label>
+                            <input type="url" class="form-control" id="trailer" name="trailer">
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="poster_url">Poster URL</label>
+                            <input type="url" class="form-control" id="poster_url" name="poster_url">
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="plot">Plot</label>
+                            <textarea class="form-control" id="plot" name="plot" rows="4"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'movie' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Movies
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Movie
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkOmdbBtn = document.getElementById('check-omdb');
+    
+    checkOmdbBtn.addEventListener('click', function() {
+        const title = document.getElementById('title').value.trim();
+        
+        if (!title) {
+            alert('Please enter a movie title first');
+            return;
+        }
+        
+        fetch(`/search/json/?q=${encodeURIComponent(title)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                
+                // Fill form with API data
+                document.getElementById('year').value = data.Year || '';
+                document.getElementById('genre').value = data.Genre || '';
+                document.getElementById('director').value = data.Director || '';
+                document.getElementById('actors').value = data.Actors || '';
+                document.getElementById('plot').value = data.Plot || '';
+                document.getElementById('poster_url').value = data.Poster || '';
+                document.getElementById('imdb_rating').value = data.imdbRating || '';
+                document.getElementById('language').value = data.Language || '';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error fetching movie data. Please try again.');
+            });
+    });
+});
+</script>
+{% endblock %}

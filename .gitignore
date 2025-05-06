@@ -1,0 +1,9 @@
+Movie_Database_Django/env/
+Movie_Database_Flask/env/
+
+*.pyc
+__pycache__/
+db.sqlite3
+/staticfiles/
+/media/
+.vscode/

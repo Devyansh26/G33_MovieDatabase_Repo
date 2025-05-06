@@ -1,0 +1,551 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block styles %}
+<style>
+    .profile-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: #2c2c2c;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .profile-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid #444;
+    }
+
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background-color: #444;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 2rem;
+        overflow: hidden;
+        border: 3px solid #ff4d4d;
+    }
+
+    .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .profile-avatar i {
+        font-size: 50px;
+        color: #aaa;
+    }
+
+    .profile-title {
+        flex: 1;
+    }
+
+    .profile-title h2 {
+        font-size: 2rem;
+        color: #ff4d4d;
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-info {
+        margin-bottom: 1.5rem;
+        color: white;
+        background-color: #333;
+        padding: 1.5rem;
+        border-radius: 8px;
+    }
+
+    .profile-info p {
+        font-size: 1.1rem;
+        margin-bottom: 0.8rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .profile-info i {
+        width: 25px;
+        margin-right: 10px;
+        color: #ff4d4d;
+    }
+
+    .favorites-section {
+        margin-top: 2rem;
+        padding-top: 1rem;
+    }
+
+    .favorites-section h3 {
+        color: #ff4d4d;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .favorites-section h3 i {
+        margin-right: 10px;
+    }
+
+    .favorite-movies {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+
+    .favorite-movie {
+        background: #333;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        position: relative;
+        transition: transform 0.3s ease;
+    }
+
+    .favorite-movie:hover {
+        transform: translateY(-5px);
+    }
+
+    .favorite-movie img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .favorite-movie-info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 0.5rem;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+    }
+
+    .remove-favorite-form {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10;
+    }
+
+    .remove-btn {
+        background: rgba(0, 0, 0, 0.6);
+        border: none;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        padding: 0;
+    }
+
+    .remove-btn:hover {
+        background: rgba(255, 77, 77, 0.9);
+        transform: scale(1.1);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .remove-btn i {
+        color: white;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .remove-btn:hover i {
+        transform: rotate(90deg);
+    }
+
+    .btn-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+    }
+
+    .btn-container form {
+        width: 48%;
+    }
+
+    .btn-update,
+    .btn-logout {
+        width: 100%;
+        padding: 1rem;
+        border: none;
+        border-radius: 40px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-update i,
+    .btn-logout i {
+        margin-right: 8px;
+    }
+
+    .btn-update {
+        background-color: #ff4d4d;
+    }
+
+    .btn-logout {
+        background-color: #444;
+    }
+
+    .btn-update:hover {
+        background-color: #ff3333;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-logout:hover {
+        background-color: #333;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .no-favorites {
+        grid-column: 1 / -1;
+        text-align: center;
+        color: #999;
+        font-style: italic;
+        padding: 20px;
+        background: #333;
+        border-radius: 8px;
+    }
+
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: #333;
+        padding: 1rem;
+        border-radius: 8px;
+        text-align: center;
+        color: white;
+    }
+
+    .stat-card .number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #ff4d4d;
+    }
+
+    .stat-card .label {
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    /* Modal styles for update profile */
+    .modal-content {
+        background-color: #2c2c2c;
+        color: white;
+    }
+
+    .modal-header {
+        border-bottom-color: #444;
+    }
+
+    .modal-footer {
+        border-top-color: #444;
+    }
+
+    .form-control {
+        background-color: #333;
+        border-color: #444;
+        color: white;
+    }
+
+    .form-control:focus {
+        background-color: #333;
+        border-color: #ff4d4d;
+        color: white;
+        box-shadow: 0 0 0 0.2rem rgba(255, 77, 77, 0.25);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-avatar">
+            {% if user.profile.profile_picture %}
+            <img src="{{ user.profile.profile_picture.url }}" alt="{{ user.username }}'s Profile Picture">
+            {% else %}
+            <i class="fas fa-user"></i>
+            {% endif %}
+        </div>
+        <div class="profile-title">
+            <h2>{{ user.name|capfirst }}</h2>
+            <!-- <p>Member since 
+                <br>January 1, 2024</p> -->
+        </div>
+    </div>
+
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="number">{{ favorites|length|default:"0" }}</div>
+            <div class="label">Favorite Movies</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">0</div>
+            <div class="label">Reviews</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">0</div>
+            <div class="label">Watchlist</div>
+        </div>
+    </div>
+
+    <div class="profile-info">
+        <p><i class="fas fa-user"></i> <strong>Username:</strong> {{ user.name|capfirst }}</p>
+        <p><i class="fas fa-envelope"></i> <strong>Email:</strong> {{ user.email }}</p>
+        <p><i class="fas fa-phone"></i> <strong>Phone:</strong> {{ user.mobile|default:"Not provided" }}</p>
+    </div>
+
+    <div class="favorites-section" id="favorites">
+        <h3><i class="fas fa-heart"></i> My Favorite Movies</h3>
+        <div class="favorite-movies">
+            {% for favorite in favorites %}
+            <div class="favorite-movie">
+                <form action="{% url 'remove_favorite' favorite.movie.movie_id %}" method="POST"
+                    class="remove-favorite-form">
+                    {% csrf_token %}
+                    <button type="submit" class="remove-btn" title="Remove from favorites">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </form>
+                <a href="{% url 'movie_detail' favorite.movie.movie_id %}">
+                    {% if favorite.movie.image and favorite.movie.image.url %}
+                    <img src="{{ favorite.movie.image.url }}" alt="{{ favorite.movie.title }}">
+                    {% else %}
+                    <img src="https://via.placeholder.com/150x200?text=No+Image" alt="{{ favorite.movie.title }}">
+                    {% endif %}
+                    <div class="favorite-movie-info">
+                        <h4>{{ favorite.movie.title }}</h4>
+                        <p>Rating: {{ favorite.movie.rating }}</p>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <p class="no-favorites">
+                <i class="fas fa-film mr-2"></i> No favorite movies yet! Browse our <a href="{% url 'movie' %}"
+                    class="text-white">movies collection</a> to add some.
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="btn-container">
+        <button type="button" class="btn-update" data-bs-toggle="modal" data-bs-target="#updateProfileModal">
+            <i class="fas fa-user-edit"></i> Update Profile
+        </button>
+
+        <form action="{% url 'logout' %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Log Out
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal for Update Profile -->
+<div class="modal fade" id="updateProfileModal" tabindex="-1" aria-labelledby="updateProfileModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateProfileModalLabel">Update Profile</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <form action="{% url 'update_profile' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email address</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="mobile" class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" id="mobile" name="mobile" value="{{ user.mobile }}">
+                    </div>
+                    <hr>
+                    <!-- Password fields -->
+                    <div class="mb-3">
+                        <label for="old_password" class="form-label">Current Password</label>
+                        <input type="password" class="form-control password-field" id="old_password" name="old_password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_password" class="form-label">New Password (leave blank to keep current)</label>
+                        <input type="password" class="form-control" id="new_password" name="new_password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Auto-close alerts
+        let alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function (alert, index) {
+            setTimeout(function () {
+                let bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }, 1500 + (index * 1000));
+        });
+
+        // Password confirmation check
+        const newPasswordInput = document.getElementById('new_password');
+        const confirmPasswordInput = document.getElementById('confirm_password');
+        const form = document.querySelector('#updateProfileModal form');
+
+        form.addEventListener('submit', function (e) {
+            if (newPasswordInput.value && newPasswordInput.value !== confirmPasswordInput.value) {
+                e.preventDefault();
+                alert('New password and confirmation do not match!');
+            }
+        });
+
+        // Profile picture preview
+        const profilePictureInput = document.getElementById('profile_picture');
+        const currentPreview = document.getElementById('current-preview');
+        const defaultIcon = document.getElementById('default-icon');
+        const removePhotoBtn = document.getElementById('remove-photo-btn');
+        const removePhotoInput = document.getElementById('remove_photo');
+
+        // Handle file selection for preview
+        profilePictureInput.addEventListener('change', function () {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    if (currentPreview) {
+                        currentPreview.src = e.target.result;
+                        currentPreview.style.display = 'block';
+                    }
+                    if (defaultIcon) {
+                        defaultIcon.style.display = 'none';
+                    }
+                    // Reset remove photo flag when a new photo is selected
+                    if (removePhotoInput) {
+                        removePhotoInput.value = "false";
+                    }
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        // Handle remove photo button
+        if (removePhotoBtn) {
+            removePhotoBtn.addEventListener('click', function () {
+                if (defaultIcon) {
+                    defaultIcon.style.display = 'block';
+                }
+                if (currentPreview) {
+                    currentPreview.style.display = 'none';
+                    currentPreview.src = '';
+                }
+                if (profilePictureInput) {
+                    profilePictureInput.value = '';
+                }
+                if (removePhotoInput) {
+                    removePhotoInput.value = "true";
+                }
+                // Hide the remove button after clicking
+                removePhotoBtn.style.display = 'none';
+            });
+        }
+    });
+
+
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('#updateProfileForm');
+        const passwordFields = document.querySelectorAll('.password-field');
+        const nameField = document.querySelector('#name');
+        const oldPasswordField = document.querySelector('#old_password');
+        const newPasswordField = document.querySelector('#new_password');
+        const confirmPasswordField = document.querySelector('#confirm_password');
+
+        form.addEventListener('submit', function (e) {
+            // Check if any password field is filled
+            const isPasswordChange = Array.from(passwordFields).some(field => field.value);
+
+            if (isPasswordChange) {
+                // Validate required fields for password change
+                if (!nameField.value.trim()) {
+                    e.preventDefault();
+                    alert('Name is required when changing password');
+                    return;
+                }
+
+                if (!oldPasswordField.value) {
+                    e.preventDefault();
+                    alert('Current password is required when changing password');
+                    return;
+                }
+
+                if (!newPasswordField.value) {
+                    e.preventDefault();
+                    alert('New password is required');
+                    return;
+                }
+
+                if (newPasswordField.value !== confirmPasswordField.value) {
+                    e.preventDefault();
+                    alert('New password and confirmation do not match!');
+                    return;
+                }
+            }
+        });
+
+        // Clear password fields when modal is closed
+        const modal = document.getElementById('updateProfileModal');
+        modal.addEventListener('hidden.bs.modal', function () {
+            passwordFields.forEach(field => field.value = '');
+        });
+    });
+</script>
+{% endblock %}
