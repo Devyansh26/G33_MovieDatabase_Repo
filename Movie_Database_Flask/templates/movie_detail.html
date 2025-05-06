@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ movie.title }}{% endblock %}
+
+{% block styles %}
+<style>
+    .movie-detail-container {
+        background-color: #1a1a1a;
+        min-height: 100vh;
+        padding: 50px 0;
+    }
+
+    .movie-content {
+        background-color: #2d2d2d;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        color: white;
+    }
+
+    .movie-poster {
+        width: 100%;
+        max-width: 400px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        margin-bottom: 20px;
+    }
+
+    .movie-info h1 {
+        color: #fff;
+        margin-bottom: 20px;
+        font-size: 2.5rem;
+    }
+
+    .movie-info p {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+    }
+
+    .info-label {
+        color: #ffc107;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+
+    .cast-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .cast-list li {
+        margin-bottom: 5px;
+    }
+
+    .back-btn {
+        background-color: #dc3545;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 20px;
+        transition: background-color 0.3s ease;
+    }
+
+    .back-btn:hover {
+        background-color: #c82333;
+        color: white;
+    }
+
+    .crew-section {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #444;
+    }
+
+    .rating-badge {
+        background-color: #ffc107;
+        color: #000;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="movie-detail-container">
+    <div class="container">
+        <div class="movie-content">
+            <div class="row">
+                <div class="col-md-4">
+                    <img src="{{ movie.image }}" alt="{{ movie.title }}" class="movie-poster">
+                </div>
+                <div class="col-md-8">
+                    <div class="movie-info">
+                        <h1>{{ movie.title }}</h1>
+                        <div class="rating-badge">
+                            Rating: {{ movie.rating }}/10
+                        </div>
+                        {% if movie.description %}
+                        <div class="mt">
+                            <!-- <h4 class="info-label">Description</h4> -->
+                            <p><span class="info-label">Description:</span>{{ movie.description }}</p>
+                            <!-- <p>{{ movie.description }}</p> -->
+                        </div>
+                        {% endif %}
+                        <p><span class="info-label">Year:</span> {{ movie.year }}</p>
+                        {% if movie.director %}
+                        <p><span class="info-label">Director:</span> {{ movie.director }}</p>
+                        {% endif %}
+                        {% if movie.writer %}
+                        <p><span class="info-label">Writer:</span> {{ movie.writer }}</p>
+                        {% endif %}
+                        
+                        {% if movie.cast %}
+                        <p><span class="info-label">Cast:</span></p>
+                        <ul class="cast-list">
+                            {% for actor in movie.cast.split(',') %}
+                            <li>{{ actor.strip() }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% if movie.language %}
+                        <p><span class="info-label">Language:</span> {{ movie.language }}</p>
+                        {% endif %}
+                        {% if movie.duration %}
+                        <p><span class="info-label">Duration:</span> {{ movie.duration }}</p>
+                        {% endif %}
+                        
+                    </div>
+                </div>
+            </div>
+            <a href="{{ url_for('dashboard') }}" class="back-btn">Back to Movies</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

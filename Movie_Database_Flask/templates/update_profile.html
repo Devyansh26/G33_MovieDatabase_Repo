@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Profile{% endblock %}
+{% block styles %}
+<style>
+    .update-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: #2c2c2c;
+        border-radius: 10px;
+    }
+
+    .update-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .update-header h2 {
+        font-size: 2rem;
+        color: #ff4d4d;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        font-size: 1.1rem;
+        color: #fff;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+    }
+
+    .btn-update {
+        display: block;
+        width: 100%;
+        padding: 1rem;
+        background-color: #ff4d4d;
+        color: #ffffff;
+        border: none;
+        border-radius: 20px;
+        font-size: 1.2rem;
+        cursor: pointer;
+    }
+
+    .btn-update:hover {
+        background-color: #ff2b2b;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="update-container">
+        <div class="update-header">
+            <h2>Update Your Profile</h2>
+            <p>Make changes to your profile details below</p>
+        </div>
+
+        <form action="{{ url_for('update_profile') }}" method="POST">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" value="{{ user.name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value="{{ user.email }}" required>
+            </div>
+            <div class="form-group">
+                <label for="mobile">Mobile</label>
+                <input type="text" id="mobile" name="mobile" value="{{ user.mobile }}" required>
+            </div>
+
+            <button type="submit" class="btn-update">Update Profile</button>
+        </form>
+    </div>
+{% endblock %}

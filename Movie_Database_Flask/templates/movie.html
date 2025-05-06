@@ -1,0 +1,354 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block styles %}
+
+<style>
+    /* * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        display: flex;
+    } */
+
+    .sidebar {
+        width: 250px;
+        height: 100vh;
+        background-color: transparent;
+        color: #ecf0f1;
+        padding: 20px;
+        position: fixed;
+        z-index: 10;
+    }
+
+    .sidebar h1 {
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
+
+    .sidebar ul {
+        list-style-type: none;
+    }
+
+    .sidebar ul li {
+        margin-bottom: 10px;
+    }
+
+    .sidebar ul li a {
+        color: #ecf0f1;
+        text-decoration: none;
+        font-size: 18px;
+    }
+
+    .sidebar ul li a:hover {
+        color:#ff4d4d;
+    }
+
+    .main-content {
+        flex: 1;
+        margin-left: 250px;
+        padding: 20px;
+        background-color: #252424   ;
+    }
+
+    .genre-section {
+        margin-bottom: 40px;
+    }
+
+    .genre-section h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: white;
+    }
+
+    .movie-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .movie-card {
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .movie-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .movie-card img {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+    }
+
+    .movie-info {
+        padding: 10px;
+    }
+
+    .movie-info h3 {
+        font-size: 18px;
+        margin-bottom: 5px;
+        color: #2c2c2c;
+    }
+
+    .movie-info p {
+        font-size: 14px;
+        color: #2c2c2c;
+    }
+
+    .add-btn { cursor: pointer; width: 48px; height: 48px; }
+    .form-container { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; box-shadow: 0px 0px 10px rgba(0,0,0,0.3); }
+
+
+    /* Add to your existing style section */
+/* .movie-actions {
+padding: 10px;
+text-align: center;
+}
+
+.btn {
+padding: 5px 10px;
+margin: 0 5px;
+border: none;
+border-radius: 3px;
+cursor: pointer;
+text-decoration: none;
+display: inline-block;
+}
+
+.btn-warning {
+background-color: #ffc107;
+color: #000;
+}
+
+.btn-danger {
+background-color: #dc3545;
+color: white;
+}
+
+.btn:hover {
+opacity: 0.8;
+} */
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mt-3">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+
+<div class="sidebar">
+    <h1 onclick="location.href='index.html';">MovieDB Dashboard</h1>
+    <ul>
+        <li><a href="#action">Action</a></li>
+        <li><a href="#comedy">Comedy</a></li>
+        <li><a href="#drama">Drama</a></li>
+        <li><a href="#scifi">Sci-Fi</a></li>
+        <li><a href="#horror">Horror</a></li>
+    </ul>
+</div>
+
+<div class="main-content">
+    <div id="action" class="genre-section">
+        <h2>Action Movies</h2>
+        <div class="movie-grid">
+            {% for movie in action_movies %}
+            
+                
+            <div class="movie-card">
+                <a href="{{ url_for('movie_detail', genre='action', movie_id=movie.movie_id) }}">
+                <img src="{{ movie.image }}" alt="{{ movie.title }}" style="height: 300px;">
+                <i class="fa-regular fa-heart" style="position: absolute; top: 10px; right: 10px; color: white; font-size: 20px;"></i>
+                <div class="movie-info">
+                    <h3>{{ movie.title }}</h3>
+                    <p><i class="fa-solid fa-star" style="color: gold;"></i> {{ movie.rating }}</p>
+                </div>
+                </a>
+                {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                <div class="movie-actions" onclick="event.stopPropagation();">
+                    <a href="{{ url_for('update_movie', genre='action', movie_id=movie.movie_id) }}" class="btn btn-warning" style="margin: 20px">Update</a>
+                    <form action="{{ url_for('delete_movie', genre='action', movie_id=movie.movie_id) }}" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this movie?')">Delete</button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+            
+            
+            {% endfor %}
+            {% if current_user.is_authenticated and current_user.role == 'admin' %}
+            <img width="48" height="48" src="https://img.icons8.com/color/48/add--v1.png" alt="add--v1"  onclick="openForm('Action')">
+            {% endif %}       
+    </div>
+    </div>
+
+    <div id="comedy" class="genre-section">
+        <h2>Comedy Movies</h2>
+        <div class="movie-grid">
+    {% for movie in comedy_movies %}
+    <div class="movie-card">
+        <a href="{{ url_for('movie_detail', genre='comedy', movie_id=movie.movie_id) }}">
+        <img src="{{ movie.image }}" alt="{{ movie.title }}" style="height: 300px;">
+        <div class="movie-info">
+            <h3>{{ movie.title }}</h3>
+            <p><i class="fa-solid fa-star" style="color: gold;"></i> {{ movie.rating }}</p>
+        </div></a>
+        {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                <div class="movie-actions">
+                <a href="{{ url_for('update_movie', genre='comedy', movie_id=movie.movie_id) }}" class="btn btn-warning" style="margin: 20px">Update</a>
+                <form action="{{ url_for('delete_movie', genre='comedy', movie_id=movie.movie_id) }}" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this movie?')">Delete</button>
+                </form>
+                </div>
+                {% endif %}
+    </div>
+    {% endfor %}
+    {% if current_user.is_authenticated and current_user.role == 'admin' %}
+    <img width="48" height="48" src="https://img.icons8.com/color/48/add--v1.png" alt="add--v1"  onclick="openForm('Comedy')">
+    {% endif %}
+        </div>
+    </div>
+
+    <div id="drama" class="genre-section">
+        <h2>Drama Movies</h2>
+        <div class="movie-grid">
+            {% for movie in drama_movies %}
+            <div class="movie-card">
+                <a href="{{ url_for('movie_detail', genre='drama', movie_id=movie.movie_id) }}">
+                <img src="{{ movie.image }}" alt="{{ movie.title }}" style="height: 300px;">
+                <div class="movie-info">
+                    <h3>{{ movie.title }}</h3>
+                    <p><i class="fa-solid fa-star" style="color: gold;"></i> {{ movie.rating }}</p>
+                </div></a>
+                {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                <div class="movie-actions">
+                <a href="{{ url_for('update_movie', genre='drama', movie_id=movie.movie_id) }}" class="btn btn-warning" style="margin: 20px">Update</a>
+                <form action="{{ url_for('delete_movie', genre='drama', movie_id=movie.movie_id) }}" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this movie?')">Delete</button>
+                </form>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% if current_user.is_authenticated and current_user.role == 'admin' %}
+            <img width="48" height="48" src="https://img.icons8.com/color/48/add--v1.png" alt="add--v1"  onclick="openForm('Drama')">
+            {% endif %}
+        </div>
+    </div>
+
+    <div id="scifi" class="genre-section">
+        <h2>Sci-Fi Movies</h2>
+        <div class="movie-grid">
+            {% for movie in scifi_movies %}
+           <div class="movie-card">
+            <a href="{{ url_for('movie_detail', genre='scifi', movie_id=movie.movie_id) }}">
+                <img src="{{ movie.image }}" alt="{{ movie.title }}" style="height: 300px;">
+                <div class="movie-info">
+                    <h3>{{ movie.title }}</h3>
+                    <p><i class="fa-solid fa-star" style="color: gold;"></i> {{ movie.rating }}</p>
+                </div></a>
+                {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                <div class="movie-actions">
+                <a href="{{ url_for('update_movie', genre='scifi', movie_id=movie.movie_id) }}" class="btn btn-warning" style="margin: 20px">Update</a>
+                <form action="{{ url_for('delete_movie', genre='scifi', movie_id=movie.movie_id) }}" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this movie?')">Delete</button>
+                </form>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% if current_user.is_authenticated and current_user.role == 'admin' %}
+            <img width="48" height="48" src="https://img.icons8.com/color/48/add--v1.png" alt="add--v1"  onclick="openForm('Sci-Fi')">
+            {% endif %}
+        </div>
+    </div>
+
+    <div id="horror" class="genre-section">
+        <h2>Horror Movies</h2>
+        <div class="movie-grid">
+            {% for movie in horror_movies %}
+            <div class="movie-card">
+                <a href="{{ url_for('movie_detail', genre='horror', movie_id=movie.movie_id) }}">
+                <img src="{{ movie.image }}" alt="{{ movie.title }}" style="height: 300px;">
+                <div class="movie-info">
+                    <h3>{{ movie.title }}</h3>
+                    <p><i class="fa-solid fa-star" style="color: gold;"></i> {{ movie.rating }}</p>
+                </div></a>
+                {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                <div class="movie-actions">
+                <a href="{{ url_for('update_movie', genre='horror', movie_id=movie.movie_id) }}" class="btn btn-warning" style="margin: 20px">Update</a>
+                <form action="{{ url_for('delete_movie', genre='horror', movie_id=movie.movie_id) }}" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this movie?')">Delete</button>
+                </form>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% if current_user.is_authenticated and current_user.role == 'admin' %}
+            <img width="48" height="48" src="https://img.icons8.com/color/48/add--v1.png" alt="add--v1"  onclick="openForm('Horror')">
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="form-container" id="movieForm">
+    <h3>Add Movie to <span id="genreName"></span></h3>
+    <form action="/add_movie" method="POST">
+        <input type="hidden" name="genre" id="genreInput">
+        <input type="text" name="title" placeholder="Movie Title" required>
+        <input type="number" name="year" placeholder="Year" required>
+        <input type="number" step="0.1" name="rating" placeholder="Rating" required>
+        <input type="text" name="image" placeholder="Image URL" required>
+        <button type="submit">Add Movie</button>
+        <button type="button" onclick="closeForm()">Cancel</button>
+    </form>
+</div>
+
+<script>
+    function openForm(genre) {
+        document.getElementById('movieForm').style.display = 'block';
+        document.getElementById('genreName').innerText = genre;
+        document.getElementById('genreInput').value = genre;
+    }
+    function closeForm() {
+        document.getElementById('movieForm').style.display = 'none';
+    }
+
+
+        // Auto-dismiss flash messages after 3 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            let alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert, index) {
+                setTimeout(function() {
+                    let bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 1500 + (index * 1000)); // Stagger the dismissal of multiple alerts
+            });
+        });
+</script>
+
+
+{% endblock %}
